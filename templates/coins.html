@@ -1,0 +1,57 @@
+{% extends "parent.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Wallet</title>
+    <style>
+        table, th, tr, td {border: 1px solid orange; padding: 7px;}
+    </style>
+</head>
+
+<h2>Moje portfolio</h2>
+
+<table>
+    <thead>
+    <th>Name</th>
+    <th>Skrót</th>
+    <th>Ilość</th>
+    <th>Cena</th>
+    <th>Kapitał</th>
+    <th>Logo</th>
+    <th>Opis</th>
+    </thead>
+{% for coin in coins %}
+    <tr>
+        <td><a href="/coin/{{ coin.id }}">{{ coin.full_name }}</a></td>
+        <td>{{ coin.short_name }}</td>
+        <td>{{ coin.amount }}</td>
+        <td>{{ coin.price }}</td>
+        <td>{{ coin.price * coin.amount }}</td>
+        <td><img src="{{ coin.logo }}" alt="logo" width="40"></td>
+        <td>{{ coin.description }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+<div>
+    <h2> Dodaj nowego coina: </h2>
+    <form method="POST" action="/coins/">
+        {{ form.hidden_tag() }}
+        <table>
+            {% for field in form if field.widget.input_type != 'hidden' %}
+                <tr>
+                    <th>{{ field.label }} {% if field.flags.required %}*{% endif %}</th>
+                    <td>{{ field }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" value="Go">
+    </form>
+</div>
+
+</body>
+</html>
+{% endblock %} 

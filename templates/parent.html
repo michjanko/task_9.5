@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+    {% block head %}
+        <meta charset="utf-8">
+        <title>Moje portfolio</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% endblock %}
+    </head>
+    <body style="background-color: darkorange;" link="yellow" vlink="yellow" alink="green">
+        
+        <h1><img src="https://images0.persgroep.net/rcs/EabHUzOkPJUwJ-xsR0zkFuDWsac/diocontent/203774000/_fitwidth/763?appId=93a17a8fd81db0de025c8abd1cca1279&quality=0.8" alt="logo" width="150"><strong> Moje portfolio</strong></h1>
+        <div class="glowna">
+        <div id="content">{% block content %}{% endblock %}</div>
+        </div>
+        
+    </body>
+</html>
