@@ -17,8 +17,9 @@ class Coins:
             return coin[0]
         return []
     
-    def create(self, data): #trzeba dodać dodawanie ID coina do słownika
-        data.pop('csrf_token')
+    def create(self, data):
+        if 'csrf_token' in data:
+            data.pop('csrf_token')
         self.coins.append(data)
         if len(self.coins) > 1:    
             self.coins[-1]["id"] = self.coins[-2]["id"] + 1
@@ -42,10 +43,10 @@ class Coins:
         coin = self.get(id)
         if coin:
             index = self.coins.index(coin)
-            data.pop('csrf_token')
+            if 'csrf_token' in data:
+                data.pop('csrf_token')
             id = self.coins[index]["id"]
-            data["id"] = id #nie może być index, bo to LP na aktualnej liście i przy usuwaniu będzie się waliło
-            print(id)
+            data["id"] = id
             self.coins[index] = data
             self.save_all()
             return True

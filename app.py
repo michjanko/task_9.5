@@ -6,6 +6,9 @@ from models import coins
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "nininini"
 
+if __name__ == "__main__":
+    app.run(debug=True)
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error(r)': 'Not found(d)', 'status_code(e)': 404}), 404)
@@ -37,7 +40,7 @@ def coin_details(coin_id):
         return redirect(url_for("coins_list"))
     return render_template("coin.html", form=form, coin_id=coin_id)
 
-@app.route("/api/v1/coins/", methods=["GET"])
+@app.route("/api/v1/coins", methods=["GET"])
 def coins_list_api_v1():
     return jsonify(coins.all())
     
@@ -48,16 +51,17 @@ def get_coin(coin_id):
         abort(404)
     return jsonify({"coin": coin})
 
-@app.route("/api/v1/coins/", methods=["POST"]) #do sprawdzenia nie wiem jak daje się załączniki/ kilka wierszy w terminalu
+@app.route("/api/v1/coins", methods=["POST"])
 def create_coin():
-    if not request.json or not 'full_name' in request.json:
+    if not request.json or not 'full_name' in request.json or not 'short_name' in request.json:
         abort(400)
     coin = {
         'full_name': request.json['full_name'],
         'short_name': request.json['short_name'],
-        'price': request.json['price'],
-        'logo': request.json['logo'],
-        #'id': coins[-1]["id"] + 1 - id -> jest dodawane w models.py w funkcji create
+        'price': request.json.get('price', 0),
+        'logo': request.json.get('logo', ""),
+        'amount': request.json.get('amount', 0),
+        'description': request.json.get('description', "")
         }
     coins.create(coin)
     return jsonify({'coin': coin}, 201)
@@ -69,7 +73,7 @@ def delete_coin(coin_id):
         abort(404)
     return jsonify({'result': result})
 
-@app.route("/api/v1/coin/<int:coin_id>", methods=["PUT"]) #pisane na odwal bez sprawdzania. idę spać
+@app.route("/api/v1/coin/<int:coin_id>", methods=["PUT"])
 def update_coin(coin_id):
     coin = coins.get(coin_id)
     if not coin:
@@ -79,7 +83,7 @@ def update_coin(coin_id):
     data = request.json
     if any([
         'full_name' in data and not isinstance(data.get('full_name'), str),
-        'short_name' in data and not isinstance(data.get('short_name'), str) #tu powinienem dopisać warunki
+        'short_name' in data and not isinstance(data.get('short_name'), str)
     ]):
         abort(400)
     coin = {
@@ -87,9 +91,10 @@ def update_coin(coin_id):
         'short_name': data.get('short_name', coin['short_name']),
         'price': data.get('price', coin['price']),
         'logo': data.get('logo', coin['logo']),
+        'amount': data.get('amount', coin['amount']),
+        'description': data.get('description', coin['description'])
     }
     coins.update(coin_id, coin)
     return jsonify({'coin': coin})
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
